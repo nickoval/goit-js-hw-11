@@ -1,8 +1,15 @@
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { fetchContent } from './fetchContent';
 // const axios = require('axios');
 
 // const BASE_URL = 'https://pixabay.com/api/';
+
+const lightBox = new SimpleLightbox('.gallery-item', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
 const refs = {
   searchForm: document.querySelector('#search-form'),
@@ -23,48 +30,59 @@ function onSearchForm(evt) {
   // const aaa= fetchContent(evt.currentTarget.elements.searchQuery.value.toLowerCase());
   // console.log(aaa);
 
- fetchContent(evt.currentTarget.elements.searchQuery.value.toLowerCase()).then(data => {
-  // console.log(data);
-  // dataAnalysis(countryData);
-  parseData(data);
-  // console.log('OK');
-})
-.catch(error => {
-  // console.log('onInput ~ error', error);
-  Notify.failure('Oops, there is no images with that name');
-});;
-
+  fetchContent(evt.currentTarget.elements.searchQuery.value.toLowerCase())
+    .then(respData => {
+      console.log(respData);
+      console.log(respData.data.hits);
+      // dataAnalysis(countryData);
+      parseData(respData);
+      // console.log('OK');
+    })
+    .catch(error => {
+      // console.log('onInput ~ error', error);
+      Notify.failure('Oops, there is no images with that name');
+    });
 }
 
-function parseData (images) {
+function parseData(respData) {
   refs.gallery.insertAdjacentHTML(
     'beforeend',
-    images.map(markupPicturiesList).join('')
+    respData.data.hits.map(markupPicturiesList).join('')
   );
+  lightBox.refresh();
 }
 
 // console.log( markupPicturiesList);
 
-function markupPicturiesList() {
-return `<div class="photo-card">
-  <img src="" alt="" loading="lazy" />
+function markupPicturiesList({
+  webformatURL,
+  largeImageURL,
+  tags,
+  likes,
+  views,
+  comments,
+  downloads,
+}) {
+  return `<div class="photo-card">
+        <a class="gallery-item" href="${largeImageURL}">
+<img src="${webformatURL}" alt="${tags}" loading="lazy" />
+</a>
   <div class="info">
     <p class="info-item">
-      <b>Likes</b>
+      <b>Likes: </b> ${likes}
     </p>
     <p class="info-item">
-      <b>Views</b>
+      <b>Views: </b> ${views}
+    </p>
+    <p class="info-item"> 
+      <b>Comments: </b> ${comments}
     </p>
     <p class="info-item">
-      <b>Comments</b>
-    </p>
-    <p class="info-item">
-      <b>Downloads</b>
+      <b>Downloads: </b> ${downloads}
     </p>
   </div>
-</div>`  ;
+</div>`;
 }
-
 
 // async function fetchContent(name) {
 //   try {
@@ -76,7 +94,6 @@ return `<div class="photo-card">
 //     console.error(error);
 //   }
 // }
-
 
 // function clearAll() {
 //   refs.countryList.innerHTML = '';
