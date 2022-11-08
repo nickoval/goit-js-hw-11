@@ -20,7 +20,8 @@ export async function fetchContent(name) {
     const response = await axios.get(
       `${BASE_URL}?key=31160684-b0388cec495519ac32683cd6a&q=${name}&image_type=photo`
     );
-    console.log(response);
+    return response;
+    // console.log(response);
   } catch (error) {
     console.error(error);
   }
