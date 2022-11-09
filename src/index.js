@@ -2,9 +2,10 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { fetchContent } from './fetchContent';
-// const axios = require('axios');
 
-// const BASE_URL = 'https://pixabay.com/api/';
+import { markupPicturiesList } from './markupContent';
+
+const PER_PAGE = 40;
 
 const lightBox = new SimpleLightbox('.gallery-item', {
   captionsData: 'alt',
@@ -14,29 +15,46 @@ const lightBox = new SimpleLightbox('.gallery-item', {
 const refs = {
   searchForm: document.querySelector('#search-form'),
   gallery: document.querySelector('.gallery'),
+  loadMore: document.querySelector('.load-more'),
   // searchQuery: document.querySelector('[name="searchQuery"]'),
 };
 
+let currentPage = 1;
+let searchImage = '';
+let totalPages = 1;
+
+refs.loadMore.style.visibility = 'hidden';
+
 refs.searchForm.addEventListener('submit', onSearchForm);
+refs.loadMore.addEventListener('click', onLoadMore);
 
 function onSearchForm(evt) {
   evt.preventDefault();
-  // if (evt.currentTarget.elements.searchQuery.value.trim() === '') {
-  //   return clearAll();
-  // }
+  clearAll();
+  currentPage = 1;
 
-  // fetchContent(evt.target.value.trim().toLowerCase());
-  // console.log(evt.currentTarget.elements.searchQuery.value.toLowerCase());
-  // const aaa= fetchContent(evt.currentTarget.elements.searchQuery.value.toLowerCase());
-  // console.log(aaa);
+  if (evt.currentTarget.elements.searchQuery.value.trim() === '') {
+    return;
+  }
 
-  fetchContent(evt.currentTarget.elements.searchQuery.value.toLowerCase())
+  searchImage = evt.currentTarget.elements.searchQuery.value
+    .trim()
+    .toLowerCase();
+
+  fetchContent(searchImage, currentPage)
     .then(respData => {
       console.log(respData);
       console.log(respData.data.hits);
+      if (respData.data.totalHits === 0) {
+        return Notify.failure('Oops, there is no images with that name');
+      }
+      totalPages = Math.ceil(respData.data.totalHits / PER_PAGE);
+      console.log('onSearchForm ~ totalPages', totalPages);
+
       // dataAnalysis(countryData);
       parseData(respData);
       // console.log('OK');
+      refs.loadMore.style.visibility = 'visible';
     })
     .catch(error => {
       // console.log('onInput ~ error', error);
@@ -52,50 +70,35 @@ function parseData(respData) {
   lightBox.refresh();
 }
 
-// console.log( markupPicturiesList);
+function onLoadMore() {
+  currentPage += 1;
 
-function markupPicturiesList({
-  webformatURL,
-  largeImageURL,
-  tags,
-  likes,
-  views,
-  comments,
-  downloads,
-}) {
-  return `<div class="photo-card">
-        <a class="gallery-item" href="${largeImageURL}">
-<img src="${webformatURL}" alt="${tags}" loading="lazy" />
-</a>
-  <div class="info">
-    <p class="info-item">
-      <b>Likes: </b> ${likes}
-    </p>
-    <p class="info-item">
-      <b>Views: </b> ${views}
-    </p>
-    <p class="info-item"> 
-      <b>Comments: </b> ${comments}
-    </p>
-    <p class="info-item">
-      <b>Downloads: </b> ${downloads}
-    </p>
-  </div>
-</div>`;
+  if (currentPage >= totalPages) {
+    currentPage = totalPages;
+    Notify.warning(
+      "We're sorry, but you've reached the end of search results."
+    );
+    refs.loadMore.style.visibility = 'hidden';
+  }
+
+  console.log('onLoadMore ~ currentPage', currentPage);
+  fetchContent(searchImage, currentPage)
+    .then(respData => {
+      console.log(respData);
+      console.log(respData.data.hits);
+      // dataAnalysis(countryData);
+      parseData(respData);
+      // console.log('OK');
+    })
+    .catch(error => {
+      // console.log('onInput ~ error', error);
+      Notify.failure('Oops, there is no images with that name');
+    });
 }
 
-// async function fetchContent(name) {
-//   try {
-//     const response = await axios.get(
-//       `${BASE_URL}?key=31160684-b0388cec495519ac32683cd6a&q=${name}&image_type=photo`
-//     );
-//     console.log(response);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
+function clearAll() {
+  refs.gallery.innerHTML = '';
+  refs.loadMore.style.visibility = 'hidden';
+}
 
-// function clearAll() {
-//   refs.countryList.innerHTML = '';
-//   refs.countryInfo.innerHTML = '';
-// }
+export { PER_PAGE };

@@ -1,8 +1,8 @@
-// import axios from 'axios';
-// const axios = require('axios');
+import { PER_PAGE } from './index';
 const axios = require('axios').default;
 
 const BASE_URL = 'https://pixabay.com/api/';
+// const PER_PAGE = 40;
 
 // export function fetchContent(name) {
 //   fetch(
@@ -15,10 +15,10 @@ const BASE_URL = 'https://pixabay.com/api/';
 //   });
 // }
 
-export async function fetchContent(name) {
+export async function fetchContent(name, page) {
   try {
     const response = await axios.get(
-      `${BASE_URL}?key=31160684-b0388cec495519ac32683cd6a&q=${name}&image_type=photo&orientation=horizontal&safesearch=true`
+      `${BASE_URL}?key=31160684-b0388cec495519ac32683cd6a&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=${PER_PAGE}`
     );
     console.log('response: ', response);
     return response;
