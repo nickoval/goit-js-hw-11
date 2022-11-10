@@ -1,5 +1,6 @@
 import { PER_PAGE } from './index';
-const axios = require('axios').default;
+// const axios = require('axios').default;
+import axios from "axios";
 
 const BASE_URL = 'https://pixabay.com/api/';
 // const PER_PAGE = 40;
