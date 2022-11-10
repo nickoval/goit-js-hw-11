@@ -53,7 +53,6 @@ function onSearchForm(evt) {
       totalPages = Math.ceil(respData.data.totalHits / PER_PAGE);
       console.log('onSearchForm ~ totalPages', totalPages);
 
-      // dataAnalysis(countryData);
       parseData(respData);
       // console.log('OK');
       refs.loadMore.style.visibility = 'visible';
@@ -88,11 +87,11 @@ function onLoadMore() {
     .then(respData => {
       console.log(respData);
       console.log(respData.data.hits);
-      // dataAnalysis(countryData);
+
       // if (respData.data.hits.length) {}
-      // Notify.succes(
-      //   `Hooray! We found ${respData.data.hits.length} more images.`
-      // );
+      Notify.success(
+        `Hooray! We found ${respData.data.hits.length} more images.`
+      );
       parseData(respData);
       const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
       window.scrollBy({top: cardHeight * 2, behavior: "smooth",});
