@@ -60,7 +60,7 @@ function onSearchForm(evt) {
     })
     .catch(error => {
       // console.log('onInput ~ error', error);
-      Notify.failure('Oops, there is no images with that name');
+      Notify.failure('Oops, there is no images with that name!!!');
     });
 }
 
@@ -89,10 +89,10 @@ function onLoadMore() {
       console.log(respData);
       console.log(respData.data.hits);
       // dataAnalysis(countryData);
-      if (respData.data.hits.length) {}
-      Notify.succes(
-        `Hooray! We found ${respData.data.hits.length} more images.`
-      );
+      // if (respData.data.hits.length) {}
+      // Notify.succes(
+      //   `Hooray! We found ${respData.data.hits.length} more images.`
+      // );
       parseData(respData);
       const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
       window.scrollBy({top: cardHeight * 2, behavior: "smooth",});
