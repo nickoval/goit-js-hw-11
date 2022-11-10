@@ -7,10 +7,6 @@ import { markupPicturiesList } from './markupContent';
 
 const PER_PAGE = 40;
 
-const lightBox = new SimpleLightbox('.gallery-item', {
-  captionsData: 'alt',
-  captionDelay: 250,
-});
 
 const refs = {
   searchForm: document.querySelector('#search-form'),
@@ -18,6 +14,12 @@ const refs = {
   loadMore: document.querySelector('.load-more'),
   // searchQuery: document.querySelector('[name="searchQuery"]'),
 };
+
+const lightBox = new SimpleLightbox('.gallery-item', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
+// const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
 
 let currentPage = 1;
 let searchImage = '';
@@ -81,19 +83,27 @@ function onLoadMore() {
     refs.loadMore.style.visibility = 'hidden';
   }
 
-  console.log('onLoadMore ~ currentPage', currentPage);
+  // console.log('onLoadMore ~ currentPage', currentPage);
   fetchContent(searchImage, currentPage)
     .then(respData => {
       console.log(respData);
       console.log(respData.data.hits);
       // dataAnalysis(countryData);
+      if (respData.data.hits.length) {}
+      Notify.succes(
+        `Hooray! We found ${respData.data.hits.length} more images.`
+      );
       parseData(respData);
+      const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
+      window.scrollBy({top: cardHeight * 2, behavior: "smooth",});
       // console.log('OK');
     })
     .catch(error => {
       // console.log('onInput ~ error', error);
       Notify.failure('Oops, there is no images with that name');
     });
+
+
 }
 
 function clearAll() {
