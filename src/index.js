@@ -7,7 +7,6 @@ import { markupPicturiesList } from './markupContent';
 
 const PER_PAGE = 40;
 
-
 const refs = {
   searchForm: document.querySelector('#search-form'),
   gallery: document.querySelector('.gallery'),
@@ -93,16 +92,16 @@ function onLoadMore() {
         `Hooray! We found ${respData.data.hits.length} more images.`
       );
       parseData(respData);
-      const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
-      window.scrollBy({top: cardHeight * 2, behavior: "smooth",});
+      const { height: cardHeight } = document
+        .querySelector('.gallery')
+        .firstElementChild.getBoundingClientRect();
+      window.scrollBy({ top: cardHeight * 2, behavior: 'smooth' });
       // console.log('OK');
     })
     .catch(error => {
       // console.log('onInput ~ error', error);
       Notify.failure('Oops, there is no images with that name');
     });
-
-
 }
 
 function clearAll() {
@@ -111,3 +110,19 @@ function clearAll() {
 }
 
 export { PER_PAGE };
+
+// Бесконечный скролл
+// window.addEventListener('scroll', () => {
+//   const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+//   // console.log('scrollHeight:   ', scrollHeight); // Висота всього документа в пікселях
+//   // console.log('scrollTop:   ', scrollTop); // Скрол від верху в пікселях
+//   // console.log('clientHeight:   ', clientHeight); // Висота вьюпорта
+//   // Scrollheight-clientheight===topheight
+//   if (scrollHeight - clientHeight === scrollTop) {
+//     console.log(
+//       `scrollHeight ${scrollHeight} - clientHeight ${clientHeight} === scrollTop ${scrollTop}`
+//     );
+//     console.log('Хочу пагинацию!!! Вызываю onLoadMore()');
+//     onLoadMore();
+//   }
+// });
